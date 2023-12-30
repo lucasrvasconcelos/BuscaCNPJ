@@ -1,190 +1,182 @@
 
-const cosultar = document.querySelector("#consultar")
-let result = document.querySelector("#result")
-const link = document.querySelector("a")
+const consultar = document.querySelector("button")
+const input = document.querySelector("input[type='text']")
+const result = document.querySelector("#result")
+const buscador = document.querySelector(".buscador")
+const error_element = document.querySelector("span.error")
 
-cosultar.addEventListener("click", () => {
+let length_anterior = 0
+let valor_anterior = ""
 
-    const cnpj_value = document.querySelector("#cnpj")
-    let cnpj = cnpj_value.value.replace(/[^0-9]/gi, "");
+input.addEventListener("input",  () => format_cnpj(input))
 
-    if(cnpj.length == 14){
-        result.style.display = "flex"
-        const url = `https://publica.cnpj.ws/cnpj/${cnpj}`
-        const options = {
-            method: 'GET',
-                mode: 'cors',
-                cache: 'default' }
-        
-        fetch(url, options)
-    
-        .then((res)=> {
-            if(res.ok){
-                res.json()
-                .then((returnCNPJ_JSON) => {
-                    const returnCNPJ = returnCNPJ_JSON
-                    buscaCNPJ(returnCNPJ)
-                })
-                .catch((error) => {
-                    console.log("erro: " + error)
-                })
-            } else if(res.status = 429){
-                alert("Limite de 3 requisições por minuto!")
-            }
-        })
-    
-        .catch((error)=>{
-            console.log("Erro: " + error)
-        })
-    } else {
-        alert(`CNPJ: ${cnpj} inválido`)
-    }
-
+consultar.addEventListener("click", () => {
+    fetch_dados()
 })
-    
 
-
-function buscaCNPJ(returnCNPJ){
-    
-    
-    result.innerHTML = ""
-    
-    const dado = {
-        cnpj: returnCNPJ["estabelecimento"]["cnpj"],
-        ie: returnCNPJ["estabelecimento"]["inscricoes_estaduais"],
-        razao: returnCNPJ["razao_social"],
-        fantasia: returnCNPJ["estabelecimento"]["nome_fantasia"],
-        telefone1: returnCNPJ["estabelecimento"]["ddd1"] + returnCNPJ["estabelecimento"]["telefone1"],
-        cep: returnCNPJ["estabelecimento"]["cep"],
-        logradouro: returnCNPJ["estabelecimento"]["logradouro"],
-        numero: returnCNPJ["estabelecimento"]["numero"],
-        complemento: returnCNPJ["estabelecimento"]["complemento"],
-        bairro: returnCNPJ["estabelecimento"]["bairro"],
-        ibge: returnCNPJ["estabelecimento"]["cidade"]["ibge_id"],
-        cidade: returnCNPJ["estabelecimento"]["cidade"]["nome"],
-        uf: `${returnCNPJ["estabelecimento"]["estado"]["sigla"]}`
+document.addEventListener("keyup", (event) => {
+    if(event.key == "Enter"){
+        fetch_dados()
     }
+})
 
-    setDado("CNPJ ", dado.cnpj)
-    setDado("Inscrição Estadual ", dado.ie , "inscricao_estadual")
-    setDado("Razão Social ", dado.razao)
-    setDado("Nome Fantasia ", dado.fantasia)
-    setDado("Telefone 01 ", dado.telefone1)
-    setDado("CEP ", dado.cep)
-    setDado("Logradouro ", dado.logradouro)
-    setDado("Número ", dado.numero)
-    setDado("Complemento ", dado.complemento)
-    setDado("Bairro  ", dado.bairro)
-    setDado("IBGE  ", dado.ibge)
-    setDado("Cidade  ", dado.cidade)
-    setDado("UF  ", dado.uf)
 
-    console.log(dado.cidade)
+function format_cnpj(input){
 
-const conteudo = `[Certificado]
-NumSerie=
-SSLLib=0
-CryptLib=0
-HttpLib=0
-XmlSignLib=0
-[Geral
-DANFE=Retrato
-FormaEmissao=0
-LogoMarca
-Salvar=1
-SalvarMensal=1
-SalvarPorCNPJ=1
-PathSalvar
-idCSC
-CSC
-VersaoDF=ve400
-[WebService]
-UF=CE
-Ambiente=Producao
-Visualizar=0
-SSLType=0
-[Emitente]
-CNPJ=${dado.cnpj}
-IE=${dado.ie[0]["inscricao_estadual"]}
-RazaoSocial=${dado.razao}
-Fantasia=${dado.fantasia}
-Fone=${dado.telefone1}
-CEP=${dado.cep}
-Logradouro=${dado.logradouro}
-Numero=${dado.numero}
-Complemento=${dado.complemento}
-Bairro=${dado.bairro}
-CodCidade=${dado.ibge}
-Cidade=${dado.cidade}
-UF=${dado.uf}
-[CTeGeral]
-TipoDACTE=0
-LogoMarca=
-FormaEmissao=0
-Salvar=0
-PathSalvar=
-ModeloDF=0
-VersaoDF=0
-[MDFeGeral]
-TipoDAMDFe=0
-FormaEmissao=0
-Salvar=1
-LocalArquivo=
-`
-const nomeArquivo = `NFe${dado.cnpj}.ini`;
+    let x = input.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,4})(\d{0,2})/);
+    input.value = !x[2] ? x[1] : x[1] + '.' + x[2] + (x[3] ? '.' : '') + x[3] + (x[4] ? '/' : x[4]) + x[4] + (x[5] ? '-' + x[5] : '');
 
-    salvarArquivoTexto(conteudo, nomeArquivo);
+    let legth_cnpj = input.value.replace(/[^0-9]/g, '').length;
+
+    legth_cnpj == 14 ? consultar.disabled = false : consultar.disabled = true
 
 }
 
-function setDado(nomecampo, valor, nomeObject){
+function fetch_dados(){
 
-    if(typeof valor == "object" && valor != null){
+    consultar.disabled = true
+    result.textContent = ""
+    error_element.textContent = ""
 
-        valor.forEach(element => {
-            let label = document.createElement("label")
-            let input = document.createElement("input")
-            label.textContent = nomecampo
-            input.type = "text"
-            input.disabled = true
-            input.value = element[nomeObject]
+    const cnpj = input.value.replace(/[^0-9]/g, '');
 
-            result.appendChild(label)
-            label.appendChild(input)
+    if(!cnpj.length == 14){
+        return
+    }   
+
+
+    const url = `https://publica.cnpj.ws/cnpj/${cnpj}`
+    const options = {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'default' }
+
+
+    fetch(url, options)
+    .then((res)=> {
+        if(res.ok){
+            res.json()
+            .then((data_fetch) => {
+                const data = [ data_fetch ]
+
+                error_element.textContent = ""
+                create_elements(data)
+                buscador.classList.add("open")
+                
+            })
+            .catch((error) => {
+                console.log("erro: " + error)
+            })
+        } else {
+
+            error_element.textContent = "Limite de requisições excedido"
+        }
+    })
+    .catch((error)=>{
+        console.log("Erro: " + error)
+    })
+    .finally(()=> {
+
+        setTimeout(() => {
+            consultar.disabled = false
+        }, 1000)
+    })
+    
+} 
+
+let dados_array = []
+
+
+function create_elements(data){
+
+    let dados_array = []
+
+    data.forEach(empresas => {
+
+        const { estabelecimento, atualizado_em } = empresas
+
+        const { razao_social } = empresas
+
+        const { nome_fantasia,
+                estado,
+                cnpj,
+                inscricoes_estaduais,
+                ddd1,
+                telefone1,
+                telefone2,
+                cep,
+                bairro,
+                tipo_logradouro,
+                logradouro,
+                numero,
+                complemento,
+                cidade } = estabelecimento
+
+
+        dados_array.push([
+                         ["Razão social", razao_social || "Não informado"],
+                         ["Atualizado em:", atualizado_em || "Não informado"],
+                         
+                         ["Nome fantasia", nome_fantasia || "Não informado"], 
+                         ["UF", `${estado.sigla} ${estado.ibge_id}` || "Não informado"],
+                         ["CNPJ", cnpj || "Não informado" ],
+                         ["Inscrição Estadual ", inscricoes_estaduais ],
+                         ["Telefone principal", telefone1 ? ddd1 + telefone1 : false || "Não informado" ],
+                         ["Telefone secundário", telefone2 ? ddd1 + telefone2 : false || "Não informado"],
+                         ["Cep", cep || "Não informado"],
+                         ["Bairro", bairro || "Não informado"],
+                         ["Logradouro", `${tipo_logradouro} ${logradouro}` || "Não informado"],
+                         ["Número", numero || "Não informado"],
+                         ["Complemento", complemento || "Não informado"],
+                         ["Cidade", cidade.nome || "Não informado"],
+                         ["Ibge", cidade.ibge_id || "Não informado"],
+                        ])
+
+    });
+
+    dados_array.forEach((elements) =>{
+
+        let empresa = document.createElement('div')
+        empresa.classList.add("empresa")
+
+        elements.forEach((element, index) => {
             
-        });
+            let dados = document.createElement('div')
+            dados.classList.add("dados-item")
 
-    } else {
-        let label = document.createElement("label")
-        let input = document.createElement("input")
-        label.textContent = nomecampo
-        input.type = "text"
-        input.disabled = true
-        input.value = valor
+            let titulo = document.createElement('span')
+            titulo.textContent = element[0]
 
-        result.appendChild(label)
-        label.appendChild(input)
-    }
-    }
+            dados.appendChild(titulo)
 
-    
-    function salvarArquivoTexto(conteudo, nomeArquivo) {
-        const blob = new Blob([conteudo], { type: 'text/plain' });
-      
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = nomeArquivo;
-      
-        link.style.display = 'none';
-        document.body.appendChild(link);
-      
-        link.click();
-      
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-      }
-      
-    
+            if(typeof element[1] == "object"){
+                element[1].forEach((element) => {
+                    let descricao = document.createElement('p')
+                    descricao.textContent = element.inscricao_estadual
+                    dados.appendChild(descricao)
+                })
+
+            } else {
+                let descricao = document.createElement('p')
+                descricao.textContent = element[1]
+                dados.appendChild(descricao)
+            }
+
+            empresa.appendChild(dados)
+            
+        })
+
+        result.appendChild(empresa)
+    })
+
+}
+
+const close_menu = document.querySelector("#closemenu").addEventListener("click", () => {
+    buscador.classList.remove("open")
+})
+
+
+
     
     
     

@@ -1,101 +1,195 @@
-* {
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap');
+
+:root
+{
+    --color-01: #ffffff;
+    --color-02: #0597F2;
+    --color-03: #F2E205;
+    --color-04: #F2CB05;
+    --color-05: #D96704;
+    --font-primary: 'Poppins', sans-serif;;
+}
+
+* 
+{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-html
-{
+    font-family: var(--font-primary);
+    text-decoration: none;
     scroll-behavior: smooth;
 }
 
-main
+body main
 {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: lightsalmon;
-}
-
-main div#top
-{
-    display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
     width: 100%;
     height: 100vh;
+    background-color: var(--color-01);
 }
 
-main div#top input 
+body main .consulta
 {
-    text-align: center;
-    width: 600px;
-    font-size: 70px;
-    border-radius: 8px;
-    border: none;
-    padding: 10px 10px;
-}
-
-
-main div#top a button
-{
-    width: 400px;
-    height: 58px;
-    outline: none;
-    font-size: 25px;
-    border-radius: 8px;
-    border: 0.5px solid rgba(0, 0, 0, 0.307);
-    cursor: pointer;
-    transition: all .2s linear;
-    font-family: monospace;
-}
-
-main div#top a button:hover
-{   
-    transform: rotateX(20deg);
-    box-shadow: 5px 15px 10px rgba(0, 0, 0, 0.307);
-}
-
-main div#result 
-{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 30px;
-    padding: 40px;
-    height: 100vh;
-    display: none;
-}
-
-main div#result label
-{   
-    font-size: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 10px;
+    gap: 25px;
 }
 
-main div#result input
+body main .consulta input
 {
-    font-size: 30px;
-    padding: 10px;
-    border: 0.5px solid white;
-    text-align: center;
-    cursor: progress;
-    flex-grow: 1;
-    width: fit-content;
+    padding: 8px 15px;
     outline: none;
-    border-radius: 8px;
+    border: 0.5px solid rgba(0, 0, 0, 0.344);
+    border-radius: 2px;
+    text-align: center;
+    font-size: 20px;
 }
 
-main div#result input:disabled
-{   
+body main .consulta button
+{
+    padding: 8px 15px;
+    background-color: var(--color-05);
+    border: 0.5px solid transparent;
+    font-weight: 600;
+    letter-spacing: 1px;
+    outline: none;
     color: white;
-    background-color: black;
+    border-radius: 2px;
+    transition: transform .2s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+    box-shadow .2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
 }
+
+body main .consulta button:disabled
+{
+    background-color: rgba(0, 0, 0, 0.182);
+}
+
+body main .consulta button:disabled:hover
+{
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+}
+
+body main .consulta button:hover
+{
+    box-shadow: -4px -4px 0px black;
+    transform: translateX(2px) translateY(2px);
+    cursor: pointer;
+}
+
+body main .consulta .error
+{
+    transition: all 0.5s ease-in-out;
+    animation: anime_error .3s ease-in-out both;
+}
+
+@keyframes anime_error {
+   
+    from
+    {
+        transform: translateY(15px);
+    }
+
+    to
+    {
+        transform: translateY(0px);
+    }
+}
+
+body main .buscador
+{
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    width: 320px;
+    border-radius: 3px;
+    gap: 15px;
+    height: 100%;
+    transform: translateY(100%);
+    background-color: var(--color-01);
+    transition: all .5s ease-in-out;
+}
+
+body main .buscador.open
+{
+    transform: translateY(0%);
+}
+
+body main .buscador h1
+{
+    padding: 15px 0;
+    margin-top: 15px;
+    color: black;
+}
+
+body main .buscador #closemenu
+{
+    position: absolute;
+    top: 36px;
+    right: 3px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+body main .buscador #closemenu i
+{
+    font-size: 50px;
+    color: red;
+
+}
+
+body main .buscador #result
+{
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 45px;
+}
+
+body main .buscador  #result .empresa
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+    background-color: var(--color-01);
+    padding: 5px;
+}
+
+body main .buscador  #result .empresa .dados-item
+{
+    background-color: white;
+    padding: 15px;
+    border-radius: 3px;
+    flex-grow: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+body main .buscador #result .empresa .dados-item span
+
+{
+    color: black;
+    font-weight: 700;
+    user-select: none;
+}
+
+body main .buscador #result .empresa .dados-item p
+{
+    width: 100%;
+    border-radius: 3px;
+}
+

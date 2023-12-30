@@ -5,21 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/7733/7733009.png" type="image/x-icon">
+    <link rel="stylesheet" href="js/icons/css/font-awesome.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <title>Busca CNPJ</title>
 </head>
 <body>
     <main>
 
-        <div id="top">
-            <input type="text" name="cnpj" id="cnpj" maxlength="14" autocomplete="off" placeholder="CNPJ ...">
-            <a href="#result">
-            <button id="consultar">consultar</button>
-            </a>
+        <div class="consulta">
+            <input type="text" name="cnpj" id="cnpj" maxlength="18" autocomplete="off" placeholder="CNPJ ...">
+            <button disabled >consultar</button>
+            <span class="error"></span>
+
         </div>
 
-        <div id="result">
+        <div class="buscador">
+            <h1>Busca CNPJ 🏃</h1>
+            <div id="result"></div>
+            <button id="closemenu"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
         </div>
+        
+
     </main>
     <script src="./js/main.js"></script>
 </body>
