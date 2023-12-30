@@ -68,8 +68,8 @@ function fetch_dados(){
                 console.log("erro: " + error)
             })
         } else {
-
-            error_element.textContent = "Limite de requisições excedido"
+            console.log(res)
+            error_element.textContent = "Error: code " + res.status
         }
     })
     .catch((error)=>{
