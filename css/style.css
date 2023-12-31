@@ -85,10 +85,43 @@ body main .consulta button:hover
     cursor: pointer;
 }
 
+body main .consulta button i
+{
+    display: none;
+}
+
+body main .consulta button.load
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: all .3s ease-in-out;
+}
+
+body main .consulta button.load i
+{
+    display: flex;
+    font-size: 15px;
+    animation: rotate_spinner 1s linear infinite;
+    border-radius: 50%;
+}
+
 body main .consulta .error
 {
     transition: all 0.5s ease-in-out;
     animation: anime_error .3s ease-in-out both;
+    padding: 0 15px;
+    text-align: center;
+}
+
+@keyframes rotate_spinner {
+    from {
+        transform: rotateZ(0deg);
+    } to 
+    {
+        transform: rotateZ(360deg);
+    }
 }
 
 @keyframes anime_error {
@@ -153,7 +186,14 @@ body main .buscador #result
     display: flex;
     flex-direction: column;
     gap: 45px;
+    padding-bottom: 45px;
 }
+
+body main .buscador #result::-webkit-scrollbar
+{
+    display: none;
+}
+
 
 body main .buscador  #result .empresa
 {
@@ -194,3 +234,27 @@ body main .buscador #result .empresa .dados-item p
     border-radius: 3px;
 }
 
+@media (min-width: 800px) {
+    body main .buscador h1
+    {
+        padding: 15px 50px;
+        box-shadow: 0px 10px 5px rgba(0, 0, 0, 0.19);
+        width: 100%;
+    }
+    body main .buscador
+    {
+        top: 0;
+        left: 0;
+        width: 100vw;
+    }
+
+    body main .buscador #closemenu {
+        right: 100px;
+        top: 20px;
+    }
+
+    body main .buscador #result .empresa
+    {
+        padding-left: 25px;
+    }
+}
