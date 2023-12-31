@@ -142,11 +142,11 @@ function create_elements(data){
                          ["Atualizado em:", atualizado_em || "Não informado"],
                          
                          ["Nome fantasia", nome_fantasia || "Não informado"], 
-                         ["UF", `${estado.sigla} ${estado.ibge_id}` || "Não informado"],
+                         ["UF", `${estado.sigla}` || "Não informado"],
                          ["CNPJ", cnpj || "Não informado" ],
                          ["Inscrição Estadual ", inscricoes_estaduais ],
-                         ["Telefone principal", telefone1 ? ddd1 + telefone1 : false || "Não informado" ],
-                         ["Telefone secundário", telefone2 ? ddd1 + telefone2 : false || "Não informado"],
+                         ["Telefone principal", telefone1 ? `(${ddd1}) ${telefone1}` : false || "Não informado" ],
+                         ["Telefone secundário", telefone2 ? `(${ddd1}) ${telefone2}` : false || "Não informado"],
                          ["Cep", cep || "Não informado"],
                          ["Bairro", bairro || "Não informado"],
                          ["Logradouro", `${tipo_logradouro} ${logradouro}` || "Não informado"],
@@ -176,8 +176,19 @@ function create_elements(data){
             if(typeof element[1] == "object"){
                 element[1].forEach((element) => {
                     let descricao = document.createElement('p')
-                    descricao.textContent = element.inscricao_estadual
+
+                    if(!element.inscricao_estadual){
+                        descricao.textContent = `ISENTO / NÃO CONTRIBUINTE`
+                    } else {
+                        if(element.ativo){
+                            descricao.textContent = ` ${element.inscricao_estadual} - ATIVA`
+                        } else {
+                            descricao.textContent = ` ${element.inscricao_estadual} - INATIVA`
+                        }
+                    }
+                    
                     dados.appendChild(descricao)
+                    
                 })
 
             } else {
