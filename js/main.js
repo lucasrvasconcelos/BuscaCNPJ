@@ -4,6 +4,8 @@ const input = document.querySelector("input[type='text']")
 const result = document.querySelector("#result")
 const buscador = document.querySelector(".buscador")
 const error_element = document.querySelector("span.error")
+let cnpj_anterior = ''
+let data = []
 
 let length_anterior = 0
 let valor_anterior = ""
@@ -35,6 +37,7 @@ function format_cnpj(input){
 function fetch_dados(){
 
     consultar.disabled = true
+    consultar.classList.add("load")
     result.textContent = ""
     error_element.textContent = ""
 
@@ -42,34 +45,52 @@ function fetch_dados(){
 
     if(!cnpj.length == 14){
         return
-    }   
+    } 
+    
+    if(cnpj == cnpj_anterior){
+        error_element.textContent = ""
+        buscador.classList.add("open")
+        create_elements(data)
 
+        setTimeout(() => {
+            consultar.disabled = false
+            consultar.classList.remove("load")
+        }, 1000)
+
+        return
+    }
 
     const url = `https://publica.cnpj.ws/cnpj/${cnpj}`
     const options = {
         method: 'GET',
         mode: 'cors',
         cache: 'default' }
-
-
+    
+    
     fetch(url, options)
     .then((res)=> {
         if(res.ok){
             res.json()
             .then((data_fetch) => {
-                const data = [ data_fetch ]
-
+                data = [ data_fetch ]
                 error_element.textContent = ""
-                create_elements(data)
                 buscador.classList.add("open")
-                
+                cnpj_anterior = cnpj
+                create_elements(data)
             })
             .catch((error) => {
                 console.log("erro: " + error)
             })
         } else {
-            console.log(res)
-            error_element.textContent = "Error: code " + res.status
+            if(res.status == 404){
+                error_element.textContent = `CNPJ inválido. error:${res.status}`
+            }else if(res.status == 429){
+                error_element.textContent = `Aguarde para novas requisições. error:${res.status}`
+            }else if(res.status == 400){
+                error_element.textContent = `Cnpj não encontrado. error:${res.status}`
+            }else{
+                error_element.textContent = "Error: code " + res.status
+            } 
         }
     })
     .catch((error)=>{
@@ -79,8 +100,11 @@ function fetch_dados(){
 
         setTimeout(() => {
             consultar.disabled = false
+            consultar.classList.remove("load")
         }, 1000)
     })
+
+    
     
 } 
 
@@ -171,9 +195,19 @@ function create_elements(data){
 
 }
 
-const close_menu = document.querySelector("#closemenu").addEventListener("click", () => {
-    buscador.classList.remove("open")
+const close_menu = document.querySelector("#closemenu").addEventListener("click", closemenu)
+
+document.addEventListener("keyup", (event) => {
+    closemenu()
 })
+
+function closemenu(){
+
+    if(buscador.classList.contains("open")){
+        buscador.classList.remove("open")
+    }
+    
+}
 
 
 
