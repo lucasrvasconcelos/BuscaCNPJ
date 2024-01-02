@@ -235,6 +235,8 @@ body main .buscador #result .empresa .dados-item p
 }
 
 @media (min-width: 800px) {
+    
+    
     body main .buscador h1
     {
         padding: 15px 50px;
