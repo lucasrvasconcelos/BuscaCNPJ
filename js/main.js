@@ -208,12 +208,9 @@ function create_elements(data){
 
 const close_menu = document.querySelector("#closemenu").addEventListener("click", closemenu)
 
-document.addEventListener("keyup", (event) => {
-    closemenu()
-})
+document.addEventListener("keyup", (event) => { event.key == "Escape" ? closemenu() : false })
 
 function closemenu(){
-
     if(buscador.classList.contains("open")){
         buscador.classList.remove("open")
     }
